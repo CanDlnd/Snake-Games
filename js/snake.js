@@ -54,6 +54,7 @@ export class Snake {
         this.ghostTimer = null;
 
         this.ui = null; // Will be set by Game class
+        this.game = null; // Will be set by Game class
 
         // Points per tail segment
         this.pointsPerSegment = 40;
@@ -319,6 +320,39 @@ export class Snake {
         // Wall collision
         if (head.x < 0 || head.x >= this.mapWidth ||
             head.y < 0 || head.y >= this.mapHeight) {
+
+            // If ghost mode is active, bounce off the wall instead of dying
+            if (this.isGhost) {
+                // Check which wall was hit and change direction accordingly
+                if (head.x < 0) {
+                    // Hit left wall, reverse x position and change direction to right
+                    head.x = 0;
+                    this.direction = 'right';
+                    this.nextDirection = 'right';
+                } else if (head.x >= this.mapWidth) {
+                    // Hit right wall, reverse x position and change direction to left
+                    head.x = this.mapWidth - this.size;
+                    this.direction = 'left';
+                    this.nextDirection = 'left';
+                } else if (head.y < 0) {
+                    // Hit top wall, reverse y position and change direction to down
+                    head.y = 0;
+                    this.direction = 'down';
+                    this.nextDirection = 'down';
+                } else if (head.y >= this.mapHeight) {
+                    // Hit bottom wall, reverse y position and change direction to up
+                    head.y = this.mapHeight - this.size;
+                    this.direction = 'up';
+                    this.nextDirection = 'up';
+                }
+
+                // Create a bounce visual effect
+                this.createBounceEffect();
+
+                // Don't return 'wall' since we handled the collision
+                return false;
+            }
+
             return 'wall';
         }
 
@@ -332,6 +366,41 @@ export class Snake {
         }
 
         return false;
+    }
+
+    // Add a method to create visual bounce effect
+    createBounceEffect() {
+        // Create a flash effect on the snake when bouncing
+        const originalAlpha = this.ctx.globalAlpha;
+        const originalBlur = this.ctx.shadowBlur;
+        const originalColor = this.ctx.shadowColor;
+
+        // Flash effect
+        this.ctx.globalAlpha = 1;
+        this.ctx.shadowBlur = 20;
+        this.ctx.shadowColor = '#95a5a6'; // Ghost color
+
+        // Draw a bounce flash at next frame but reset afterward
+        setTimeout(() => {
+            this.ctx.globalAlpha = originalAlpha;
+            this.ctx.shadowBlur = originalBlur;
+            this.ctx.shadowColor = originalColor;
+        }, 200);
+
+        // Play bounce sound if game reference exists
+        if (this.game && this.game.bounceSound) {
+            // Reset sound to start
+            this.game.bounceSound.currentTime = 0;
+            this.game.bounceSound.play().catch(error => {
+                console.log("Audio playback failed:", error);
+            });
+        }
+
+        // Create floating text to indicate bounce
+        if (this.game) {
+            const head = this.body[0];
+            this.game.showFloatingPoints("SEKME!", head.x, head.y);
+        }
     }
 
     loseLife() {
@@ -468,5 +537,10 @@ export class Snake {
                 this.shrink();
             }
         }
+    }
+
+    // Add setter for game object
+    setGame(game) {
+        this.game = game;
     }
 } 

@@ -53,10 +53,11 @@ export class Game {
         // Add frame counter
         this.frameCount = 0;
 
-        // Initialize death sound with correct path
+        // Initialize sounds with correct paths
         this.deathSound = new Audio('./sounds/death-sounds.mp3');
         this.eatSound = new Audio('./sounds/eat-apple.mp3');
         this.clickSound = new Audio('./sounds/click-button.wav');
+        this.bounceSound = new Audio('./sounds/bounce.mp3'); // Add bounce sound (create this file)
 
         // Replace blockInterval with block spawn times
         this.lastBlockSpawnTime = 0;
@@ -86,6 +87,7 @@ export class Game {
     initializeGameObjects() {
         const cellSize = 20; // Define cell size
         this.snake = new Snake(this.canvas);
+        this.snake.setGame(this); // Pass game reference to snake
         this.food = new Food(this.canvas, cellSize);
         this.blocks = [];
     }
@@ -330,13 +332,6 @@ export class Game {
         this.isPaused = true;
         this.ui.pauseTimer();
         this.food.pause();
-    }
-
-    initializeGameObjects() {
-        const cellSize = 20; // Define cell size
-        this.snake = new Snake(this.canvas);
-        this.food = new Food(this.canvas, cellSize);
-        this.blocks = [];
     }
 
     addBlock() {

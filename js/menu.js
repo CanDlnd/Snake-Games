@@ -47,7 +47,7 @@ export class MenuManager {
                 </div>
                 <div class="special-item">
                     <span class="special-food ghost"></span>
-                    <p>Hayalet Modu: Engellerden geçebilirsiniz</p>
+                    <p>Hayalet Modu: Engellerden geçebilir ve duvarlara çarptığınızda geri sekersiniz</p>
                 </div>
                 <div class="special-item">
                     <span class="special-food extra-life"></span>
@@ -154,7 +154,9 @@ export class MenuManager {
         mainMenu.className = 'menu main-menu';
 
         mainMenu.innerHTML = `
-            <h1 class="animated-title ${!this.hasPlayedIntro ? 'animate-in' : ''}">Yılan Oyunu</h1>
+            <div class="logo-container ${!this.hasPlayedIntro ? 'animate-in' : ''}">
+                <img src="logo.png" alt="Pixel Serpent: Yem Avı" class="game-logo">
+            </div>
             <div class="button-container ${!this.hasPlayedIntro ? 'first-load' : ''}">
                 <button class="menu-button" id="startGame">Oyuna Başla</button>
                 <button class="menu-button" id="showHighScores">Yüksek Skorlar</button>
@@ -191,6 +193,7 @@ export class MenuManager {
         const infoMenu = document.createElement('div');
         infoMenu.className = 'menu info-menu';
         infoMenu.innerHTML = `
+            <img src="logo.png" alt="Pixel Serpent: Yem Avı" class="game-logo-small">
             <h2>Nasıl Oynanır?</h2>
             <div class="info-content">
                 <section class="info-section">
@@ -225,7 +228,7 @@ export class MenuManager {
                         </div>
                         <div class="special-item">
                             <span class="special-food ghost"></span>
-                            <p><strong>Hayalet Modu:</strong> 15 saniye boyunca duvarlardan ve engellarden geçebilirsiniz</p>
+                            <p><strong>Hayalet Modu:</strong> 15 saniye boyunca duvarlardan ve engellarden geçebilirsiniz. Duvara çarptığınızda geri sekersiniz!</p>
                         </div>
                         <div class="special-item">
                             <span class="special-food extra-life"></span>
@@ -321,6 +324,7 @@ export class MenuManager {
         `).join('');
 
         gameOverMenu.innerHTML = `
+            <img src="logo.png" alt="Pixel Serpent: Yem Avı" class="game-logo-small">
             <h2>Oyun Bitti!</h2>
             <p class="death-message">${deathMessage}</p>
             <p>Skorun: <span id="finalScore">${score}</span></p>
@@ -369,6 +373,7 @@ export class MenuManager {
         const pauseMenu = document.createElement('div');
         pauseMenu.className = 'menu pause-menu';
         pauseMenu.innerHTML = `
+            <img src="logo.png" alt="Pixel Serpent: Yem Avı" class="game-logo-small">
             <h2>Oyun Duraklatıldı</h2>
             <div class="button-container">
                 <button class="menu-button" id="resumeGame">Devam Et</button>
@@ -421,6 +426,7 @@ export class MenuManager {
         ` : '<p>Henüz yüksek skor yok!</p>';
 
         highScoresMenu.innerHTML = `
+            <img src="logo.png" alt="Pixel Serpent: Yem Avı" class="game-logo-small">
             <h2>Yüksek Skorlar</h2>
             ${leaderboardHTML}
             <button class="menu-button" id="backFromHighScores">Geri</button>
@@ -440,6 +446,7 @@ export class MenuManager {
         const mapMenu = document.createElement('div');
         mapMenu.className = 'menu map-selection';
         mapMenu.innerHTML = `
+            <img src="logo.png" alt="Pixel Serpent: Yem Avı" class="game-logo-small">
             <h2>Harita Boyutu Seç</h2>
             <div class="map-options">
                 <div class="map-option ${this.game.currentMapSize === 'small' ? 'active' : ''}" data-size="small">
@@ -555,6 +562,7 @@ export class MenuManager {
         const exitMenu = document.createElement('div');
         exitMenu.className = 'menu exit-confirmation';
         exitMenu.innerHTML = `
+            <img src="logo.png" alt="Pixel Serpent: Yem Avı" class="game-logo-small">
             <h2>Emin misin?</h2>
             <p>Oyundan çıkmak istediğine emin misin?</p>
             <div class="button-container">
