@@ -184,6 +184,16 @@ export class UI {
     }
 
     clearEffectTimers() {
+        // Remove all effect timers from the DOM
         this.activeEffectsContainer.innerHTML = '';
+
+        // Make sure all animation timers are cancelled
+        const timers = document.querySelectorAll('.effect-timer');
+        timers.forEach(timer => {
+            // Add fade-out animation
+            timer.classList.add('fade-out');
+            // Remove the element after animation completes
+            setTimeout(() => timer.remove(), 300);
+        });
     }
 } 

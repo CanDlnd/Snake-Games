@@ -508,14 +508,30 @@ export class Snake {
         // Clear double score effect
         if (this.doubleScoreTimer) {
             clearTimeout(this.doubleScoreTimer);
+            this.doubleScoreTimer = null;
         }
         this.doubleScoreActive = false;
 
         // Clear ghost mode effect
         if (this.ghostTimer) {
             clearTimeout(this.ghostTimer);
+            this.ghostTimer = null;
         }
         this.isGhost = false;
+
+        // Clear magnetic effect
+        if (this.magneticTimer) {
+            clearTimeout(this.magneticTimer);
+            this.magneticTimer = null;
+        }
+        this.isMagnetic = false;
+
+        // Reset sprint state
+        this.isSprinting = false;
+        if (this.sprintTimeout) {
+            clearTimeout(this.sprintTimeout);
+            this.sprintTimeout = null;
+        }
 
         // Reset visual effects
         this.ctx.globalAlpha = 1;

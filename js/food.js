@@ -11,6 +11,20 @@ export class Food {
 
         // Add special item properties
         this.isSpecialItem = false;
+
+        // Track time since last special item appeared
+        this.lastSpecialItemTime = 0;
+        this.specialItemInterval = 15000; // 15 seconds between special items
+    }
+
+    // Add a reset method
+    reset() {
+        this.lastSpecialItemTime = 0;
+        this.isSpecialItem = false;
+        this.type = 'regular';
+        this.spawnTime = 0;
+        this.totalPausedTime = 0;
+        this.pauseStartTime = null;
     }
 
     spawn(snake) {
@@ -22,9 +36,13 @@ export class Food {
             this.position.y = Math.floor(Math.random() * gridHeight) * this.size;
         } while (this.checkCollisionWithSnake(snake));
 
-        // Random chance to spawn special item (10% chance)
-        if (Math.random() < 0.15) {
+        const currentTime = Date.now();
+        const timeSinceLastSpecial = currentTime - this.lastSpecialItemTime;
+
+        // Guarantee a special item every 15 seconds
+        if (timeSinceLastSpecial >= this.specialItemInterval) {
             this.isSpecialItem = true;
+            this.lastSpecialItemTime = currentTime;
 
             // Randomly select special item type
             const random = Math.random();
@@ -38,17 +56,35 @@ export class Food {
                 this.type = 'magnetic'; // New Magnetic Bait
             }
         } else {
-            // Regular food items
-            this.isSpecialItem = false;
-            const random = Math.random();
-            if (random < 0.1) {
-                this.type = 'regular';
-            }
-            else if (random < 0.2) {
-                this.type = 'green';
-            }
-            else {
-                this.type = 'yellow';
+            // Random chance to spawn special item (15% chance)
+            if (Math.random() < 0.15) {
+                this.isSpecialItem = true;
+                this.lastSpecialItemTime = currentTime;
+
+                // Randomly select special item type
+                const random = Math.random();
+                if (random < 0.25) {
+                    this.type = 'double_score';
+                } else if (random < 0.5) {
+                    this.type = 'extra_life';
+                } else if (random < 0.75) {
+                    this.type = 'ghost';
+                } else {
+                    this.type = 'magnetic'; // New Magnetic Bait
+                }
+            } else {
+                // Regular food items
+                this.isSpecialItem = false;
+                const random = Math.random();
+                if (random < 0.1) {
+                    this.type = 'regular';
+                }
+                else if (random < 0.2) {
+                    this.type = 'green';
+                }
+                else {
+                    this.type = 'yellow';
+                }
             }
         }
 
@@ -103,37 +139,53 @@ export class Food {
         const centerY = this.position.y + this.size / 2;
         const radius = this.size / 2;
 
-        // Set color based on special type
-        let color;
+        // Set color and icon based on special type
+        let color, icon;
         switch (this.type) {
-            case 'double_score': color = '#9b59b6'; break;
-            case 'extra_life': color = '#3498db'; break;
-            case 'ghost': color = '#95a5a6'; break;
+            case 'double_score':
+                color = '#9b59b6';
+                icon = '2X';
+                break;
+            case 'extra_life':
+                color = '#3498db';
+                icon = '+1';
+                break;
+            case 'ghost':
+                color = '#95a5a6';
+                icon = '👻';
+                break;
+            case 'magnetic':
+                color = '#e67e22';
+                icon = '🧲';
+                break;
         }
 
-        // Draw outer glow
+        // Draw pulsing outer glow
+        const time = Date.now() / 1000;
+        const pulseSize = 1 + Math.sin(time * 4) * 0.1;
+
         ctx.shadowColor = color;
         ctx.shadowBlur = 15;
 
-        // Draw main circle
+        // Draw main circle with pulse effect
         ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.arc(centerX, centerY, radius * pulseSize, 0, Math.PI * 2);
         ctx.fillStyle = color;
         ctx.fill();
 
         // Draw inner circle
         ctx.beginPath();
-        ctx.arc(centerX, centerY, radius - 2, 0, Math.PI * 2);
+        ctx.arc(centerX, centerY, radius * 0.7, 0, Math.PI * 2);
         ctx.fillStyle = '#fff';
         ctx.fill();
 
-        // Draw question mark
+        // Draw icon or text
         ctx.shadowBlur = 0;
-        ctx.font = 'bold 14px Arial';
+        ctx.font = 'bold 12px Arial';
         ctx.fillStyle = color;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('?', centerX, centerY);
+        ctx.fillText(icon, centerX, centerY);
 
         // Add sparkle effect
         this.drawSparkles(ctx, centerX, centerY, radius);

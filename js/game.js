@@ -245,6 +245,7 @@ export class Game {
         this.snake.body = this.snake.body.slice(0, 1);
 
         // Reset food
+        this.food.reset();  // Call the reset method first
         this.food.spawn(this.snake);
 
         // Clear the canvas
@@ -267,6 +268,13 @@ export class Game {
     gameOver(reason) {
         this.isRunning = false;
         this.startTime = null;
+
+        // Stop the timer at the time of death
+        this.ui.pauseTimer();
+
+        // Clear all active effects immediately
+        this.ui.clearEffectTimers();
+        this.snake.resetSpecialFeatures();
 
         this.deathSound.play().catch(error => {
             console.log("Audio playback failed:", error);
@@ -467,22 +475,27 @@ export class Game {
                     switch (this.food.type) {
                         case 'double_score':
                             this.snake.activateDoubleScore();
-                            this.showFloatingPoints("2X SCORE!", foodX, foodY);
+                            this.showFloatingPoints("2X PUAN!", foodX, foodY);
                             break;
                         case 'extra_life':
                             this.remainingPasses++;
                             this.updatePasses();
-                            this.showFloatingPoints("+1 PASS", foodX, foodY);
+                            this.showFloatingPoints("+1 YEM HAKKI", foodX, foodY);
                             break;
                         case 'ghost':
                             this.snake.activateGhostMode();
-                            this.showFloatingPoints("GHOST MODE!", foodX, foodY);
+                            this.showFloatingPoints("HAYALET MODU!", foodX, foodY);
                             break;
                         case 'magnetic':
                             this.snake.activateMagneticMode();
-                            this.showFloatingPoints("MAGNETIC MODE!", foodX, foodY);
-                            break; // Handle magnetic bait
+                            this.showFloatingPoints("MANYETIK MODU!", foodX, foodY);
+                            break;
                     }
+
+                    // Special effect sound
+                    this.eatSound.play().catch(error => {
+                        console.log("Audio playback failed:", error);
+                    });
 
                     // Special items might affect score indirectly, so adjust length
                     this.snake.adjustLengthBasedOnScore(this.ui.score);
