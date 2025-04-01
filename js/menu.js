@@ -17,26 +17,46 @@ export class MenuManager {
         this.howToPlayContent = `
             <h2>How to Play</h2>
             <div class="controls-info">
-                <p>Use arrow keys to control the snake</p>
-                <p>↑ Up | ↓ Down | ← Left | → Right</p>
-                <p>Press ESC to pause</p>
+                <p>Yılanı kontrol etmek için yön tuşlarını kullanın:</p>
+                <p>↑ Yukarı | ↓ Aşağı | ← Sol | → Sağ</p>
+                <p>Duraklatmak için ESC tuşuna basın</p>
+                <p>Aynı yöne iki kez hızlıca basarak koşabilirsiniz</p>
             </div>
             <div class="apples-info">
-                <h3>Apple Types:</h3>
-                <ul>
-                    <li>
-                        <span class="apple-icon yellow"></span>
-                        Yellow Apple: +10 points
-                    </li>
-                    <li>
-                        <span class="apple-icon green"></span>
-                        Green Apple: +20 health
-                    </li>
-                    <li>
-                        <span class="apple-icon red"></span>
-                        Red Apple: -15 health
-                    </li>
-                </ul>
+                <h3>Yem Türleri:</h3>
+                <div class="apple-info">
+                    <div class="apple-item">
+                        <span class="apple yellow"></span>
+                        <p>Sarı Elma: +20 puan kazanırsınız</p>
+                    </div>
+                    <div class="apple-item">
+                        <span class="apple green"></span>
+                        <p>Yeşil Elma: +5 puan ve +20 can</p>
+                    </div>
+                    <div class="apple-item">
+                        <span class="apple red"></span>
+                        <p>Kırmızı Elma: -25 puan ve -25 can</p>
+                    </div>
+                </div>
+            </div>
+            <div class="special-food-info">
+                <h3>Özel Yemler:</h3>
+                <div class="special-item">
+                    <span class="special-food double-score"></span>
+                    <p>2X Skor: Puanlarınız ikiye katlanır</p>
+                </div>
+                <div class="special-item">
+                    <span class="special-food ghost"></span>
+                    <p>Hayalet Modu: Engellerden geçebilirsiniz</p>
+                </div>
+                <div class="special-item">
+                    <span class="special-food extra-life"></span>
+                    <p>Ekstra Hak: Bir yem hakkı kazanırsınız</p>
+                </div>
+                <div class="special-item">
+                    <span class="special-food magnetic"></span>
+                    <p>Manyetik Mod: Yemleri kendinize çekersiniz</p>
+                </div>
             </div>
         `;
     }
@@ -175,23 +195,45 @@ export class MenuManager {
             <div class="info-content">
                 <section class="info-section">
                     <h3>Oyun Hakkında</h3>
-                    <p>Bu eğlenceli yılan oyununda, yılanın yemesi gereken üç farklı elma türü bulunuyor, her biri farklı etkilere sahip:</p>
+                    <p>Bu yılan oyununda amacınız, yemi yiyerek skorunuzu artırmak ve yılanınızı büyütmektir. Her 40 puan, yılanınızın kuyruğuna 1 segment ekler.</p>
                 </section>
                 
                 <section class="info-section">
-                    <h3>Elmalar</h3>
+                    <h3>Yemler</h3>
                     <div class="apple-info">
                         <div class="apple-item">
                             <span class="apple yellow"></span>
-                            <p>Sarı Elma: Yılan +20 can kazanır.</p>
+                            <p>Sarı Elma: +20 puan kazanırsınız (2X etkinken +40 puan)</p>
                         </div>
                         <div class="apple-item">
                             <span class="apple green"></span>
-                            <p>Yeşil Elma: Yılan +5 puan kazanır ve 20 can ekstra kazanır.</p>
+                            <p>Yeşil Elma: +5 puan ve +20 can kazanırsınız</p>
                         </div>
                         <div class="apple-item">
                             <span class="apple red"></span>
-                            <p>Kırmızı Elma: Yılan -25 puan kaybeder ve -25 can kaybeder.</p>
+                            <p>Kırmızı Elma: -25 puan ve -25 can kaybedersiniz</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="info-section">
+                    <h3>Özel Yemler</h3>
+                    <div class="special-food-info">
+                        <div class="special-item">
+                            <span class="special-food double-score"></span>
+                            <p><strong>2X Skor:</strong> 15 saniye boyunca tüm puanlarınız ikiye katlanır</p>
+                        </div>
+                        <div class="special-item">
+                            <span class="special-food ghost"></span>
+                            <p><strong>Hayalet Modu:</strong> 15 saniye boyunca duvarlardan ve engellarden geçebilirsiniz</p>
+                        </div>
+                        <div class="special-item">
+                            <span class="special-food extra-life"></span>
+                            <p><strong>Ekstra Hak:</strong> Bir yem hakkı kazanırsınız</p>
+                        </div>
+                        <div class="special-item">
+                            <span class="special-food magnetic"></span>
+                            <p><strong>Manyetik Mod:</strong> 15 saniye boyunca yakındaki yemleri kendinize çekersiniz</p>
                         </div>
                     </div>
                 </section>
@@ -200,10 +242,23 @@ export class MenuManager {
                     <h3>Zorluklar</h3>
                     <div class="challenges-info">
                         <ul>
-                            <li>Her 15 saniyede bir siyah bloklar eklenir. Bu bloklara çarptığınızda yılan yanar.</li>
-                            <li>Yılan kendine veya duvarlara çarptığında ölür.</li>
-                            <li>Hedef, yılanı olabildiğince uzun süre hayatta tutmak ve en yüksek puanı elde etmektir.</li>
-                            <li>Oyunda dikkatli olun, çünkü her hareketin sonucu hayatta kalmanıza etki eder!</li>
+                            <li>Her 15 saniyede bir siyah engeller oluşur. Bunlara çarpmak oyunun bitmesine neden olur.</li>
+                            <li>Her 20 saniyede bir bombalar oluşur. Patlama alanında bulunmak oyunun bitmesine neden olur.</li>
+                            <li>Yemlerin süresi dolmadan yemezseniz, yem hakkınız azalır. Tüm haklarınızı kaybettiğinizde oyun sona erer.</li>
+                            <li>Yılan kendine veya duvarlara çarptığında oyun biter (Hayalet modu aktif değilse).</li>
+                            <li>Canınız 0'a düştüğünde oyun sona erer.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section class="info-section">
+                    <h3>İpuçları</h3>
+                    <div class="tips-info">
+                        <ul>
+                            <li>Aynı yön tuşuna iki kez hızlıca basarak kısa süreli koşabilirsiniz.</li>
+                            <li>Her 40 puan, yılanınızın uzunluğunu 1 segment artırır.</li>
+                            <li>Kırmızı elmalardan mümkün olduğunca kaçının, bunlar hem canınızı hem de skorunuzu azaltır.</li>
+                            <li>Özel yemler parlak ve soru işareti ile gösterilir, bunları kaçırmayın!</li>
                         </ul>
                     </div>
                 </section>

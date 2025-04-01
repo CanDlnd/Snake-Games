@@ -596,19 +596,13 @@ p {
 }
 
 .apple-item {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 15px;
-    border-radius: 8px;
     display: flex;
-    gap: 15px;
-    justify-content: center;
-    width: 100%;
+    align-items: center;
+    margin: 15px 0;
 }
 
 .apple-item p {
-    margin: 0;
-    font-size: 1.1em;
-    font-weight: 600;
+    margin-left: 15px;
 }
 
 #backFromInfo {
@@ -1976,4 +1970,111 @@ button:hover,
 /* Effect countdown styles */
 .effect-countdown {
     font-size: 12px;
+}
+
+/* Apple item styles in info menu */
+.apple-item {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+}
+
+.apple-item p {
+    margin-left: 15px;
+}
+
+/* Special food items in the instructions */
+.special-food-info {
+    margin: 15px 0;
+}
+
+.special-item {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+}
+
+.special-item p {
+    margin-left: 15px;
+}
+
+.special-food {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    position: relative;
+    display: inline-block;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.special-food::before {
+    content: "?";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.special-food.double-score {
+    background-color: #9b59b6;
+    box-shadow: 0 0 10px #9b59b6;
+}
+
+.special-food.ghost {
+    background-color: #95a5a6;
+    box-shadow: 0 0 10px #95a5a6;
+}
+
+.special-food.extra-life {
+    background-color: #3498db;
+    box-shadow: 0 0 10px #3498db;
+}
+
+.special-food.magnetic {
+    background-color: #e67e22;
+    box-shadow: 0 0 10px #e67e22;
+}
+
+/* Tips section styling */
+.tips-info ul {
+    list-style: none;
+    padding-left: 20px;
+}
+
+.tips-info li {
+    position: relative;
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
+.tips-info li:before {
+    content: "→";
+    position: absolute;
+    left: -20px;
+    color: #e98aa7;
+}
+
+.apple {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.apple.red {
+    background-color: #e74c3c;
+    box-shadow: 0 0 10px #e74c3c;
+}
+
+.apple.green {
+    background-color: #2ecc71;
+    box-shadow: 0 0 10px #2ecc71;
+}
+
+.apple.yellow {
+    background-color: #f1c40f;
+    box-shadow: 0 0 10px #f1c40f;
 }
