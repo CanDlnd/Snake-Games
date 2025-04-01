@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yılan Oyunu</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="game-container">
+        <div class="game-wrapper">
+            <div class="game-ui-container">
+                <div class="score-display">Puan: <span id="scoreValue">0</span></div>
+                <div class="timer-display" id="timerDisplay">Süre: 00:00</div>
+                <div class="passes-container">
+                    <span class="pass-text">Yem Hakkı:</span>
+                    <div class="passes">
+                        <div class="pass" data-pass="1"></div>
+                        <div class="pass" data-pass="2"></div>
+                        <div class="pass" data-pass="3"></div>
+                    </div>
+                </div>
+                <div class="health-container">
+                    <div class="health-bar">
+                        <div class="health-fill" id="healthFill"></div>
+                    </div>
+                    <span class="health-text" id="healthValue">100%</span>
+                </div>
+
+            </div>
+            <canvas id="gameCanvas" class="hidden"></canvas>
+        </div>
+    </div>
+
+
+    <div class="controller">
+        <h2>Kontroller</h2>
+        <div class="control-item">
+            <span class="key-indicator">↑</span>
+            <span class="control-text">Yukarı</span>
+        </div>
+        <div class="control-item">
+            <span class="key-indicator">↓</span>
+            <span class="control-text">Aşağı</span>
+        </div>
+        <div class="control-item">
+            <span class="key-indicator">←</span>
+            <span class="control-text">Sola</span>
+        </div>
+        <div class="control-item">
+            <span class="key-indicator">→</span>
+            <span class="control-text">Sağa</span>
+        </div>
+        <div class="control-item">
+            <span class="key-indicator">ESC</span>
+            <span class="control-text">Oyunu duraklat</span>
+        </div>
+        <button class="back-button">GERİ</button>
+    </div>
+
+
+    <script type="module" src="js/food.js"></script>
+    <script type="module" src="js/snake.js"></script>
+    <script type="module" src="js/ui.js"></script>
+    <script type="module" src="js/menu.js"></script>
+    <script type="module" src="js/game.js"></script>
+</body>
+
+</html>
