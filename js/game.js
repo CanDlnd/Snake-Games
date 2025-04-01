@@ -149,8 +149,22 @@ export class Game {
             width = height * canvasRatio;
         }
 
+        // Check if we're on macOS Safari by looking for exclusive Safari features
+        const isMacSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+        // Add a small additional buffer for MacBooks to avoid scrollbars
+        if (isMacSafari) {
+            width *= 0.98;
+            height *= 0.98;
+        }
+
         this.canvas.style.width = `${width}px`;
         this.canvas.style.height = `${height}px`;
+
+        // Force pixel perfection on Retina displays
+        if (window.devicePixelRatio > 1) {
+            this.ctx.imageSmoothingEnabled = false;
+        }
     }
 
     async start(mapSize = 'medium') {

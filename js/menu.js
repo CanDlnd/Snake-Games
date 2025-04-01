@@ -193,7 +193,7 @@ export class MenuManager {
         const infoMenu = document.createElement('div');
         infoMenu.className = 'menu info-menu';
         infoMenu.innerHTML = `
-            <img src="logo.png" alt="Pixel Serpent: Yem Avı" class="game-logo-small">
+          
             <h2>Nasıl Oynanır?</h2>
             <div class="info-content">
                 <section class="info-section">
@@ -324,7 +324,7 @@ export class MenuManager {
         `).join('');
 
         gameOverMenu.innerHTML = `
-            <img src="logo.png" alt="Pixel Serpent: Yem Avı" class="game-logo-small">
+          
             <h2>Oyun Bitti!</h2>
             <p class="death-message">${deathMessage}</p>
             <p>Skorun: <span id="finalScore">${score}</span></p>
@@ -373,7 +373,7 @@ export class MenuManager {
         const pauseMenu = document.createElement('div');
         pauseMenu.className = 'menu pause-menu';
         pauseMenu.innerHTML = `
-            <img src="logo.png" alt="Pixel Serpent: Yem Avı" class="game-logo-small">
+          
             <h2>Oyun Duraklatıldı</h2>
             <div class="button-container">
                 <button class="menu-button" id="resumeGame">Devam Et</button>
@@ -426,7 +426,7 @@ export class MenuManager {
         ` : '<p>Henüz yüksek skor yok!</p>';
 
         highScoresMenu.innerHTML = `
-            <img src="logo.png" alt="Pixel Serpent: Yem Avı" class="game-logo-small">
+          
             <h2>Yüksek Skorlar</h2>
             ${leaderboardHTML}
             <button class="menu-button" id="backFromHighScores">Geri</button>
@@ -446,7 +446,7 @@ export class MenuManager {
         const mapMenu = document.createElement('div');
         mapMenu.className = 'menu map-selection';
         mapMenu.innerHTML = `
-            <img src="logo.png" alt="Pixel Serpent: Yem Avı" class="game-logo-small">
+          
             <h2>Harita Boyutu Seç</h2>
             <div class="map-options">
                 <div class="map-option ${this.game.currentMapSize === 'small' ? 'active' : ''}" data-size="small">
@@ -562,7 +562,7 @@ export class MenuManager {
         const exitMenu = document.createElement('div');
         exitMenu.className = 'menu exit-confirmation';
         exitMenu.innerHTML = `
-            <img src="logo.png" alt="Pixel Serpent: Yem Avı" class="game-logo-small">
+          
             <h2>Emin misin?</h2>
             <p>Oyundan çıkmak istediğine emin misin?</p>
             <div class="button-container">

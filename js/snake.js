@@ -39,6 +39,10 @@ export class Snake {
         this.isSprinting = false;
         this.sprintTimeout = null;
 
+        // Enhanced controls for trackpads (better sensitivity on macOS)
+        this.isMac = /Mac|iPad|iPhone|iPod/.test(navigator.userAgent);
+        this.doublePressThreshold = this.isMac ? 250 : 200; // More forgiving double-press on macOS trackpads
+
         this.health = 100;
         this.score = 0;
         this.reset();

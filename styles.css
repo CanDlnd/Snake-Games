@@ -229,6 +229,28 @@ body {
     overflow: hidden;
     position: relative;
     z-index: 1;
+    /* Use CSS variables for better responsiveness */
+    --game-padding: 10px;
+}
+
+@media (min-height: 900px) {
+    .game-container {
+        --game-padding: 20px;
+    }
+}
+
+.game-wrapper {
+    width: 100%;
+    max-width: 1600px;
+    height: calc(100vh - var(--game-padding) * 2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--game-padding);
+    box-sizing: border-box;
+    position: relative;
+    gap: 0;
 }
 
 /* Add a container for the game header */
@@ -460,19 +482,6 @@ p {
         transform: translate(-50%, -50%) scale(1);
         opacity: 1;
     }
-}
-
-/* Game container wrapper */
-.game-wrapper {
-    width: 100%;
-    max-width: 1600px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    box-sizing: border-box;
-    position: relative;
-    gap: 0;
 }
 
 /* UI container styles */
@@ -2126,4 +2135,205 @@ button:hover,
 .apple.yellow {
     background-color: #f1c40f;
     box-shadow: 0 0 10px #f1c40f;
+}
+
+/* Responsive layout improvements */
+@media (max-width: 1440px) {
+
+    /* MacBook Pro 14" and similar */
+    .game-logo {
+        width: 320px;
+    }
+
+    .menu {
+        width: 90%;
+        max-width: 600px;
+        padding: 2rem;
+    }
+
+    .menu-button {
+        width: 220px;
+        padding: 0.8rem;
+        font-size: 1.1em;
+    }
+
+    .game-logo-small {
+        width: 160px;
+    }
+
+    .info-menu {
+        width: 90%;
+        max-width: 700px;
+    }
+
+    .info-section h3 {
+        font-size: 1em;
+    }
+
+    .apple-item p,
+    .special-item p {
+        font-size: 0.85em;
+    }
+}
+
+@media (max-width: 1280px) {
+
+    /* MacBook Air and smaller laptops */
+    .game-wrapper {
+        max-width: 95vw;
+    }
+
+    #gameCanvas {
+        max-width: 95%;
+        max-height: 80vh;
+    }
+
+    .game-ui-container {
+        max-width: 95%;
+        padding: 10px 15px;
+    }
+
+    .game-logo {
+        width: 280px;
+    }
+
+    .menu {
+        width: 90%;
+        max-width: 500px;
+        padding: .5rem 1.5rem;
+    }
+
+    .menu-button {
+        width: 200px;
+        padding: 0.7rem;
+        font-size: 1em;
+    }
+
+    .game-logo-small {
+        width: 140px;
+    }
+
+    .controller {
+        width: 90%;
+        max-width: 500px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    h2 {
+        font-size: 1.3em;
+    }
+
+    .info-section h3 {
+        font-size: 0.9em;
+    }
+
+    .apple-item p,
+    .special-item p {
+        font-size: 0.8em;
+    }
+}
+
+/* Fix for Safari (macOS) */
+@supports (-webkit-touch-callout: none) {
+    .game-wrapper {
+        height: calc(100vh - 50px);
+    }
+
+    #gameCanvas {
+        max-height: 75vh;
+    }
+
+    .menu-button {
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    .game-logo {
+        -webkit-filter: drop-shadow(0 0 10px #f7b2c6);
+        filter: drop-shadow(0 0 10px #f7b2c6);
+    }
+
+    .main-menu,
+    .info-menu,
+    .controller,
+    .game-over,
+    .pause-menu {
+        -webkit-backdrop-filter: blur(5px);
+        backdrop-filter: blur(5px);
+    }
+}
+
+/* Fix for touch controls on macOS trackpads */
+@media (pointer: fine) {
+    .key-indicator {
+        min-width: 40px;
+        min-height: 40px;
+        padding: 10px;
+    }
+
+    .control-item {
+        gap: 15px;
+        padding: 12px;
+    }
+
+    .pass {
+        width: 12px;
+        height: 12px;
+    }
+}
+
+/* Improve font rendering on macOS Retina displays */
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+
+    body,
+    h1,
+    h2,
+    h3,
+    p,
+    .menu-button,
+    .control-text,
+    .passes-container {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+
+    .score-display,
+    .timer-display,
+    .health-text {
+        font-size: 0.9em;
+        letter-spacing: -0.5px;
+    }
+
+    .game-logo {
+        transform: translateZ(0);
+        backface-visibility: hidden;
+    }
+
+    /* Fix for "Press Start 2P" font rendering issues on Retina */
+    .animated-title,
+    h1,
+    h2,
+    h3,
+    .menu-button,
+    .control-text {
+        letter-spacing: 0.5px;
+    }
+}
+
+/* Fix for notched MacBooks */
+@media only screen and (min-device-width: 1024px) and (max-device-width: 1366px) {
+    .game-ui-container {
+        padding-left: max(15px, env(safe-area-inset-left));
+        padding-right: max(15px, env(safe-area-inset-right));
+    }
+
+    .menu {
+        margin-left: env(safe-area-inset-left);
+        margin-right: env(safe-area-inset-right);
+    }
 }
