@@ -114,24 +114,47 @@ export class Food {
     }
 
     drawRegularFood(ctx) {
-        ctx.beginPath();
-        ctx.arc(
-            this.position.x + this.size / 2,
-            this.position.y + this.size / 2,
-            this.size / 2,
-            0,
-            Math.PI * 2
-        );
+        const centerX = this.position.x + this.size / 2;
+        const centerY = this.position.y + this.size / 2;
+        const radius = this.size / 2 - 2;
 
         // Set color based on type
+        let color, glowColor;
         switch (this.type) {
-            case 'regular': ctx.fillStyle = '#e74c3c'; break;
-            case 'green': ctx.fillStyle = '#2ecc71'; break;
-            case 'yellow': ctx.fillStyle = '#f1c40f'; break;
+            case 'regular':
+                color = '#e74c3c';
+                glowColor = '#c0392b';
+                break;
+            case 'green':
+                color = '#2ecc71';
+                glowColor = '#27ae60';
+                break;
+            case 'yellow':
+                color = '#f1c40f';
+                glowColor = '#f39c12';
+                break;
         }
 
+        // Add glow effect
+        ctx.shadowColor = glowColor;
+        ctx.shadowBlur = 8;
+
+        // Draw main circle
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.fillStyle = color;
         ctx.fill();
         ctx.closePath();
+
+        // Add highlight for 3D effect
+        ctx.beginPath();
+        ctx.arc(centerX - radius / 3, centerY - radius / 3, radius / 3, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.fill();
+        ctx.closePath();
+
+        // Reset shadow
+        ctx.shadowBlur = 0;
     }
 
     drawSpecialFood(ctx) {

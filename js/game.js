@@ -373,7 +373,9 @@ export class Game {
     }
 
     drawBlocks() {
-        this.ctx.fillStyle = 'black';
+        // Set block style
+        const blockSize = 20;
+
         this.blocks.forEach(block => {
             // Add ghostly effect to blocks when snake is in ghost mode
             if (this.snake.isGhost) {
@@ -382,7 +384,18 @@ export class Game {
                 this.ctx.shadowBlur = 10;
             }
 
-            this.ctx.fillRect(block.x, block.y, 20, 20);
+            // Draw block with a more attractive style
+            this.ctx.fillStyle = '#805a72';
+            this.ctx.fillRect(block.x, block.y, blockSize, blockSize);
+
+            // Add inner border for depth
+            this.ctx.strokeStyle = '#6e495f';
+            this.ctx.lineWidth = 2;
+            this.ctx.strokeRect(block.x + 1, block.y + 1, blockSize - 2, blockSize - 2);
+
+            // Add subtle pattern
+            this.ctx.fillStyle = '#6e495f40';
+            this.ctx.fillRect(block.x + 5, block.y + 5, blockSize - 10, blockSize - 10);
 
             // Reset effects
             this.ctx.globalAlpha = 1;
@@ -393,6 +406,10 @@ export class Game {
     gameLoop(currentTime) {
         if (!this.isRunning || this.isPaused) return;
 
+        // FPS'i optimize etmek için RAF kullanımı
+        requestAnimationFrame((time) => this.gameLoop(time));
+
+        // Önceki karedeki temizleme işlemini yapmadan önce RAF'ı çağırdığımızdan emin oluyoruz
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.drawBackground();
 
@@ -402,6 +419,9 @@ export class Game {
 
         this.drawBlocks();
         this.drawBombs(); // Draw bombs on the canvas
+
+        // Yılanın çizimini ve güncellemesini yap
+        const moved = this.snake.update(currentTime);
         this.snake.draw(this.ctx);
 
         // Attract food if magnetic mode is active
@@ -426,6 +446,17 @@ export class Game {
 
         this.food.draw(currentTime);
 
+        // UI güncellemeleri
+        this.updateUIElements();
+
+        // Yılan hareket ettiyse çarpışma kontrolü yapalım
+        if (moved) {
+            this.checkCollisions();
+        }
+    }
+
+    // UI güncellemeleri için yeni metod
+    updateUIElements() {
         // Replace this.updateUI() with UI updates
         if (this.scoreElement) {
             this.scoreElement.textContent = this.ui.score;
@@ -447,7 +478,10 @@ export class Game {
                 this.healthFill.classList.remove('low');
             }
         }
+    }
 
+    // Çarpışma kontrolleri için yeni metod
+    checkCollisions() {
         const head = this.snake.body[0];
 
         // Check block collisions (only if not in ghost mode)
@@ -459,67 +493,63 @@ export class Game {
             });
         }
 
-        if (this.snake.update(currentTime)) {
-            const collisionType = this.snake.checkCollision();
-            if (collisionType) {
-                this.gameOver(collisionType);
-                return;
-            }
-
-            const foodX = Math.floor(this.food.position.x / this.snake.size) * this.snake.size;
-            const foodY = Math.floor(this.food.position.y / this.snake.size) * this.snake.size;
-
-            // Check for food consumption
-            if (head.x === foodX && head.y === foodY) {
-                if (this.food.isSpecialItem) {
-                    switch (this.food.type) {
-                        case 'double_score':
-                            this.snake.activateDoubleScore();
-                            this.showFloatingPoints("2X PUAN!", foodX, foodY);
-                            break;
-                        case 'extra_life':
-                            this.remainingPasses++;
-                            this.updatePasses();
-                            this.showFloatingPoints("+1 YEM HAKKI", foodX, foodY);
-                            break;
-                        case 'ghost':
-                            this.snake.activateGhostMode();
-                            this.showFloatingPoints("HAYALET MODU!", foodX, foodY);
-                            break;
-                        case 'magnetic':
-                            this.snake.activateMagneticMode();
-                            this.showFloatingPoints("MANYETIK MODU!", foodX, foodY);
-                            break;
-                    }
-
-                    // Special effect sound
-                    this.eatSound.play().catch(error => {
-                        console.log("Audio playback failed:", error);
-                    });
-
-                    // Special items might affect score indirectly, so adjust length
-                    this.snake.adjustLengthBasedOnScore(this.ui.score);
-                } else {
-                    // Handle regular food types
-                    switch (this.food.type) {
-                        case 'regular':
-                            this.showFloatingPoints("-25", foodX, foodY);
-                            break;
-                        case 'green':
-                            this.showFloatingPoints("+5", foodX, foodY);
-                            break;
-                        case 'yellow':
-                            const points = this.snake.doubleScoreActive ? "+40" : "+20";
-                            this.showFloatingPoints(points, foodX, foodY);
-                            break;
-                    }
-                    this.handleFoodEffect(this.food.type);
-                }
-                this.food.spawn(this.snake); // Spawn new food immediately
-            }
+        const collisionType = this.snake.checkCollision();
+        if (collisionType) {
+            this.gameOver(collisionType);
+            return;
         }
 
-        requestAnimationFrame((time) => this.gameLoop(time));
+        const foodX = Math.floor(this.food.position.x / this.snake.size) * this.snake.size;
+        const foodY = Math.floor(this.food.position.y / this.snake.size) * this.snake.size;
+
+        // Check for food consumption
+        if (head.x === foodX && head.y === foodY) {
+            if (this.food.isSpecialItem) {
+                switch (this.food.type) {
+                    case 'double_score':
+                        this.snake.activateDoubleScore();
+                        this.showFloatingPoints("2X PUAN!", foodX, foodY);
+                        break;
+                    case 'extra_life':
+                        this.remainingPasses++;
+                        this.updatePasses();
+                        this.showFloatingPoints("+1 YEM HAKKI", foodX, foodY);
+                        break;
+                    case 'ghost':
+                        this.snake.activateGhostMode();
+                        this.showFloatingPoints("HAYALET MODU!", foodX, foodY);
+                        break;
+                    case 'magnetic':
+                        this.snake.activateMagneticMode();
+                        this.showFloatingPoints("MANYETIK MODU!", foodX, foodY);
+                        break;
+                }
+
+                // Special effect sound
+                this.eatSound.play().catch(error => {
+                    console.log("Audio playback failed:", error);
+                });
+
+                // Special items might affect score indirectly, so adjust length
+                this.snake.adjustLengthBasedOnScore(this.ui.score);
+            } else {
+                // Handle regular food types
+                switch (this.food.type) {
+                    case 'regular':
+                        this.showFloatingPoints("-25", foodX, foodY);
+                        break;
+                    case 'green':
+                        this.showFloatingPoints("+5", foodX, foodY);
+                        break;
+                    case 'yellow':
+                        const points = this.snake.doubleScoreActive ? "+40" : "+20";
+                        this.showFloatingPoints(points, foodX, foodY);
+                        break;
+                }
+                this.handleFoodEffect(this.food.type);
+            }
+            this.food.spawn(this.snake); // Spawn new food immediately
+        }
     }
 
     showFloatingPoints(text, x, y) {
@@ -541,24 +571,47 @@ export class Game {
     }
 
     drawBackground() {
-        // Draw grass pattern
-        this.ctx.fillStyle = '#e8ded2';
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        // Create a checkerboard pattern for the background
+        const cellSize = 20;
 
-        // Grid pattern
-        this.ctx.strokeStyle = '#ccc4b9';
-        this.ctx.lineWidth = 0.5; // Thinner grid lines
+        // Set lighter colors for better visibility
+        const primaryColor = '#f0e6d8';
+        const secondaryColor = '#e1d7c9';
+        const borderColor = '#d8cfc0';
 
-        // Draw vertical lines
-        for (let x = 0; x < this.canvas.width; x += 20) {
+        // Draw the checkerboard pattern
+        for (let x = 0; x < this.canvas.width; x += cellSize) {
+            for (let y = 0; y < this.canvas.height; y += cellSize) {
+                this.ctx.fillStyle = ((x / cellSize) + (y / cellSize)) % 2 === 0 ? primaryColor : secondaryColor;
+                this.ctx.fillRect(x, y, cellSize, cellSize);
+            }
+        }
+
+        // Add gradient border around the edge of the map
+        const borderWidth = 3;
+        this.ctx.strokeStyle = borderColor;
+        this.ctx.lineWidth = borderWidth;
+        this.ctx.strokeRect(
+            borderWidth / 2,
+            borderWidth / 2,
+            this.canvas.width - borderWidth,
+            this.canvas.height - borderWidth
+        );
+
+        // Add subtle grid lines for better cell visibility
+        this.ctx.strokeStyle = '#d8cfc090';
+        this.ctx.lineWidth = 0.5;
+
+        // Draw vertical grid lines
+        for (let x = 0; x < this.canvas.width; x += cellSize) {
             this.ctx.beginPath();
             this.ctx.moveTo(x, 0);
             this.ctx.lineTo(x, this.canvas.height);
             this.ctx.stroke();
         }
 
-        // Draw horizontal lines
-        for (let y = 0; y < this.canvas.height; y += 20) {
+        // Draw horizontal grid lines
+        for (let y = 0; y < this.canvas.height; y += cellSize) {
             this.ctx.beginPath();
             this.ctx.moveTo(0, y);
             this.ctx.lineTo(this.canvas.width, y);

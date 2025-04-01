@@ -8,28 +8,29 @@ export class Snake {
         // Base speed values for different map sizes (higher numbers = slower speed)
         this.speedSettings = {
             small: {
-                baseSpeed: 65,      // Much slower for small map (was 50)
-                sprintSpeed: 45,    // Slower sprint for small map (was 35)
-                maxSpeed: 40        // Slower max speed (was 30)
+                baseSpeed: 85,      // Significantly slower for small map
+                sprintSpeed: 65,    // Slower sprint for small map
+                maxSpeed: 60        // Slower max speed
             },
             medium: {
-                baseSpeed: 55,      // Slower for medium map (was 40)
-                sprintSpeed: 40,    // Slower sprint (was 30)
-                maxSpeed: 35        // Slower max speed (was 25)
+                baseSpeed: 75,      // Significantly slower for medium map
+                sprintSpeed: 60,    // Slower sprint
+                maxSpeed: 55        // Slower max speed
             },
             large: {
-                baseSpeed: 35,      // Keep large map speed the same
-                sprintSpeed: 25,
-                maxSpeed: 20
+                baseSpeed: 55,      // Significantly slower for large map
+                sprintSpeed: 45,    // Slower sprint
+                maxSpeed: 40        // Slower max speed
             }
         };
 
         // Initialize with medium speed (will be updated in setMapSpeed)
         this.baseSpeed = this.speedSettings.medium.baseSpeed;
+        this.normalSpeed = this.baseSpeed; // Önemli: Normal hız için referans değer
         this.sprintSpeed = this.speedSettings.medium.sprintSpeed;
         this.maxSpeed = this.speedSettings.medium.maxSpeed;
 
-        this.speedIncrement = 0.001;  // Reduced from 0.002 for smoother speed increase
+        this.speedIncrement = 0.0005;  // Reduced for even smoother speed increase
 
         // Sprint properties
         this.sprintDuration = 500;
@@ -42,6 +43,11 @@ export class Snake {
         // Enhanced controls for trackpads (better sensitivity on macOS)
         this.isMac = /Mac|iPad|iPhone|iPod/.test(navigator.userAgent);
         this.doublePressThreshold = this.isMac ? 250 : 200; // More forgiving double-press on macOS trackpads
+
+        // FPS iyileştirme için interpolasyon değerleri
+        this.interpolationFactor = 0.3; // Daha düşük = daha yumuşak geçiş
+        this.lastRenderTime = 0;
+        this.renderInterval = 16; // ~60 FPS hedefi için render aralığı
 
         this.health = 100;
         this.score = 0;
@@ -68,6 +74,7 @@ export class Snake {
         const speeds = this.speedSettings[mapSize];
         if (speeds) {
             this.baseSpeed = speeds.baseSpeed;
+            this.normalSpeed = this.baseSpeed; // Normal hız referansını güncelle
             this.sprintSpeed = speeds.sprintSpeed;
             this.maxSpeed = speeds.maxSpeed;
         }
@@ -94,6 +101,7 @@ export class Snake {
         this.mapHeight = mapHeight;
         this.canMove = false;
         this.lastMove = null;
+        this.lastRenderTime = 0;
 
         // Reset special features
         this.resetSpecialFeatures();
@@ -101,8 +109,9 @@ export class Snake {
 
     increaseSpeed() {
         // Make speed increase more gradual
-        const speedReduction = this.speedIncrement * (this.baseSpeed / 64); // Changed from 32 to 64 for slower increase
+        const speedReduction = this.speedIncrement * (this.baseSpeed / 64);
         this.baseSpeed = Math.max(this.maxSpeed, this.baseSpeed - speedReduction);
+        this.normalSpeed = this.baseSpeed; // Normal hız referansını da güncelle
         this.sprintSpeed = Math.max(this.maxSpeed, this.sprintSpeed - speedReduction);
     }
 
@@ -143,7 +152,20 @@ export class Snake {
         this.body.pop();
         this.lastMove = currentTime;
         this.direction = this.nextDirection;
+
+        // Yüksek kare hızı için mikro-zaman ayarlama
+        requestAnimationFrame(() => this.microUpdate());
+
         return true;
+    }
+
+    // Daha yüksek kare hızı için ara-güncelleme fonksiyonu
+    microUpdate() {
+        const now = performance.now();
+        if (now - this.lastRenderTime < this.renderInterval) return;
+        this.lastRenderTime = now;
+
+        // İhtiyaç olursa ekstra animasyon işlemleri buraya eklenebilir
     }
 
     draw() {
@@ -160,20 +182,93 @@ export class Snake {
             this.ctx.shadowBlur = 0;
         }
 
-        // Draw snake body
+        // Yılan vücudunu çiz - akıcılık efektleri ile
         this.body.forEach((segment, index) => {
+            let segmentX = segment.x;
+            let segmentY = segment.y;
+
+            // Hareket yönünde hafif bir görsel efekt ekle - hareket hissini artırır
+            if (index === 0 && this.isSprinting) {
+                // Sprint durumunda yılan kafasına özel hareket efekti
+                const moveEffect = 2;
+                switch (this.direction) {
+                    case 'up': segmentY += Math.sin(Date.now() / 100) * moveEffect; break;
+                    case 'down': segmentY += Math.sin(Date.now() / 100) * moveEffect; break;
+                    case 'left': segmentX += Math.sin(Date.now() / 100) * moveEffect; break;
+                    case 'right': segmentX += Math.sin(Date.now() / 100) * moveEffect; break;
+                }
+            }
+
             if (index === 0) {
                 // Draw head
-                this.drawHead(segment);
+                this.drawHead({ x: segmentX, y: segmentY });
             } else {
-                // Draw body segment
-                this.ctx.fillStyle = '#f7c5d4';
-                this.ctx.fillRect(segment.x, segment.y, this.size - 1, this.size - 1);
+                // Draw body segment with subtle pulse effect
+                const pulseAmount = 0.5;
+                const pulseSpeed = 150;
+                const pulse = Math.sin(Date.now() / pulseSpeed + index * 0.2) * pulseAmount;
+
+                // Renkli gövde parçaları
+                const baseColor = '#f7c5d4';
+                let segmentColor;
+
+                // Segmentlere hafif farklı tonlar ver
+                if (index % 3 === 0) {
+                    segmentColor = this.adjustColor(baseColor, 5);
+                } else if (index % 3 === 1) {
+                    segmentColor = this.adjustColor(baseColor, -5);
+                } else {
+                    segmentColor = baseColor;
+                }
+
+                this.ctx.fillStyle = segmentColor;
+
+                // Daha yumuşak görünüm için yuvarlatılmış köşeler
+                this.roundRect(
+                    segmentX + pulse,
+                    segmentY + pulse,
+                    this.size - 1 - pulse * 2,
+                    this.size - 1 - pulse * 2,
+                    3
+                );
             }
         });
 
         this.ctx.shadowBlur = 0; // Reset shadow
         this.ctx.globalAlpha = 1; // Reset transparency
+    }
+
+    // Yuvarlatılmış dörtgen çizim fonksiyonu
+    roundRect(x, y, width, height, radius) {
+        this.ctx.beginPath();
+        this.ctx.moveTo(x + radius, y);
+        this.ctx.arcTo(x + width, y, x + width, y + height, radius);
+        this.ctx.arcTo(x + width, y + height, x, y + height, radius);
+        this.ctx.arcTo(x, y + height, x, y, radius);
+        this.ctx.arcTo(x, y, x + width, y, radius);
+        this.ctx.closePath();
+        this.ctx.fill();
+    }
+
+    // Renk ayarla (açıklaştır/koyulaştır)
+    adjustColor(hex, percent) {
+        // hex to rgb
+        let r = parseInt(hex.substring(1, 3), 16);
+        let g = parseInt(hex.substring(3, 5), 16);
+        let b = parseInt(hex.substring(5, 7), 16);
+
+        // adjust
+        r = Math.max(0, Math.min(255, r + percent));
+        g = Math.max(0, Math.min(255, g + percent));
+        b = Math.max(0, Math.min(255, b + percent));
+
+        // rgb to hex
+        return '#' + this.toHex(r) + this.toHex(g) + this.toHex(b);
+    }
+
+    toHex(num) {
+        const hex = num.toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
     }
 
     drawHead(head) {
@@ -313,7 +408,8 @@ export class Snake {
         this.isSprinting = true;
 
         this.sprintTimeout = setTimeout(() => {
-            this.baseSpeed = 40; // Reset to very slow initial speed
+            // Önemli değişiklik: Önceden tanımlanmış normal hıza geri dön (40 gibi sabit bir değer değil)
+            this.baseSpeed = this.normalSpeed;
             this.isSprinting = false;
         }, this.sprintDuration);
     }
