@@ -446,7 +446,7 @@ export class MenuManager {
         const mapMenu = document.createElement('div');
         mapMenu.className = 'menu map-selection';
         mapMenu.innerHTML = `
-          
+            <img src="logo.png" alt="Pixel Serpent: Yem Avı" class="game-logo-small">
             <h2>Harita Boyutu Seç</h2>
             <div class="map-options">
                 <div class="map-option ${this.game.currentMapSize === 'small' ? 'active' : ''}" data-size="small">
@@ -463,7 +463,7 @@ export class MenuManager {
                 </div>
             </div>
             <div class="map-selection-buttons">
-                <button class="menu-button" id="startSelectedMap" disabled>Oyunu Başlat</button>
+                <button class="menu-button" id="startSelectedMap">Oyunu Başlat</button>
                 <button class="menu-button" id="backFromMapSelection">Geri</button>
             </div>
         `;
@@ -472,7 +472,12 @@ export class MenuManager {
         this.pushMenu('mapSelection', mapMenu);
         this.addClickSoundsToButtons();
 
+        // Pre-select medium map as default
+        this.selectedMapSize = this.game.currentMapSize;
+
+        // Make sure start button is enabled
         const startButton = document.getElementById('startSelectedMap');
+        startButton.removeAttribute('disabled');
 
         // Add click handlers for map options
         const mapOptions = mapMenu.querySelectorAll('.map-option');
@@ -491,17 +496,16 @@ export class MenuManager {
 
         // Add click handler for start button
         startButton.addEventListener('click', async () => {
-            if (this.selectedMapSize) {
-                this.hideAllMenus();
-                this.hideController();
-                await this.game.startTransition();
-                this.canvas.classList.remove('hidden');
-                await this.game.start(this.selectedMapSize);
-            }
+            const mapSize = this.selectedMapSize || 'medium'; // Default to medium if nothing selected
+            this.hideAllMenus();
+            this.hideController();
+            await this.game.startTransition();
+            this.canvas.classList.remove('hidden');
+            await this.game.start(mapSize);
         });
 
         document.getElementById('backFromMapSelection').addEventListener('click', () => {
-            this.handleBack();
+            this.showMainMenu(); // Return directly to main menu
         });
     }
 

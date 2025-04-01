@@ -12,29 +12,29 @@
 <body>
     <div class="game-container">
         <div class="game-wrapper">
-            <div class="game-ui-container">
-                <div class="score-display">Puan: <span id="scoreValue">0</span></div>
-                <div class="timer-display" id="timerDisplay">Süre: 00:00</div>
-                <div class="passes-container">
-                    <span class="pass-text">Yem Hakkı:</span>
-                    <div class="passes">
-                        <div class="pass" data-pass="1"></div>
-                        <div class="pass" data-pass="2"></div>
-                        <div class="pass" data-pass="3"></div>
+            <div class="game-element-container">
+                <div class="game-ui-container">
+                    <div class="score-display">Puan: <span id="scoreValue">0</span></div>
+                    <div class="timer-display" id="timerDisplay">Süre: 00:00</div>
+                    <div class="passes-container">
+                        <span class="pass-text">Yem Hakkı:</span>
+                        <div class="passes">
+                            <div class="pass" data-pass="1"></div>
+                            <div class="pass" data-pass="2"></div>
+                            <div class="pass" data-pass="3"></div>
+                        </div>
+                    </div>
+                    <div class="health-container">
+                        <div class="health-bar">
+                            <div class="health-fill" id="healthFill"></div>
+                        </div>
+                        <span class="health-text" id="healthValue">100%</span>
                     </div>
                 </div>
-                <div class="health-container">
-                    <div class="health-bar">
-                        <div class="health-fill" id="healthFill"></div>
-                    </div>
-                    <span class="health-text" id="healthValue">100%</span>
-                </div>
-
+                <canvas id="gameCanvas" class="hidden"></canvas>
             </div>
-            <canvas id="gameCanvas" class="hidden"></canvas>
         </div>
     </div>
-
 
     <div class="controller">
         <h2>Kontroller</h2>
@@ -60,7 +60,6 @@
         </div>
         <button class="back-button">GERİ</button>
     </div>
-
 
     <script type="module" src="js/food.js"></script>
     <script type="module" src="js/snake.js"></script>
