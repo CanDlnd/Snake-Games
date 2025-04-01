@@ -54,6 +54,9 @@ export class Snake {
         this.ghostTimer = null;
 
         this.ui = null; // Will be set by Game class
+
+        // Points per tail segment
+        this.pointsPerSegment = 40;
     }
 
     setMapSpeed(mapSize) {
@@ -102,6 +105,13 @@ export class Snake {
         // Add new segment at the tail
         const tail = this.body[this.body.length - 1];
         this.body.push({ ...tail });
+    }
+
+    shrink() {
+        // Only shrink if snake has more than 1 segment
+        if (this.body.length > 1) {
+            this.body.pop(); // Remove the last segment
+        }
     }
 
     update(currentTime) {
@@ -437,5 +447,26 @@ export class Snake {
         // Reset visual effects
         this.ctx.globalAlpha = 1;
         this.ctx.shadowBlur = 0;
+    }
+
+    // New method to adjust snake length based on score
+    adjustLengthBasedOnScore(score) {
+        // Calculate how many segments should be in the tail (excluding head)
+        const targetSegments = Math.floor(score / this.pointsPerSegment);
+
+        // Current number of segments (excluding head)
+        const currentSegments = this.body.length - 1;
+
+        if (targetSegments > currentSegments) {
+            // Grow snake if score increased enough
+            for (let i = 0; i < targetSegments - currentSegments; i++) {
+                this.grow();
+            }
+        } else if (targetSegments < currentSegments) {
+            // Shrink snake if score decreased enough
+            for (let i = 0; i < currentSegments - targetSegments; i++) {
+                this.shrink();
+            }
+        }
     }
 } 

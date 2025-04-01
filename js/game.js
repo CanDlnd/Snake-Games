@@ -225,6 +225,9 @@ export class Game {
         // Reset snake and special features
         this.snake.reset(this.canvas.width, this.canvas.height);
 
+        // Ensure snake starts with just the head (length of 1)
+        this.snake.body = this.snake.body.slice(0, 1);
+
         // Reset food
         this.food.spawn(this.snake);
 
@@ -409,6 +412,9 @@ export class Game {
         // Replace this.updateUI() with UI updates
         if (this.scoreElement) {
             this.scoreElement.textContent = this.ui.score;
+
+            // Make sure snake length always matches score
+            this.snake.adjustLengthBasedOnScore(this.ui.score);
         }
 
         // Update health bar
@@ -448,7 +454,6 @@ export class Game {
 
             // Check for food consumption
             if (head.x === foodX && head.y === foodY) {
-                this.snake.grow(); // Ensure the snake grows immediately
                 if (this.food.isSpecialItem) {
                     switch (this.food.type) {
                         case 'double_score':
@@ -469,11 +474,14 @@ export class Game {
                             this.showFloatingPoints("MAGNETIC MODE!", foodX, foodY);
                             break; // Handle magnetic bait
                     }
+
+                    // Special items might affect score indirectly, so adjust length
+                    this.snake.adjustLengthBasedOnScore(this.ui.score);
                 } else {
                     // Handle regular food types
                     switch (this.food.type) {
                         case 'regular':
-                            this.showFloatingPoints("-15", foodX, foodY);
+                            this.showFloatingPoints("-25", foodX, foodY);
                             break;
                         case 'green':
                             this.showFloatingPoints("+5", foodX, foodY);
@@ -593,16 +601,19 @@ export class Game {
                     this.gameOver('health');
                     return;
                 }
-                this.snake.grow();
+                // Adjust snake length based on updated score
+                this.snake.adjustLengthBasedOnScore(this.ui.score);
                 break;
             case 'green':
                 this.ui.score += 5 * scoreMultiplier;
                 this.snake.health = Math.min(100, this.snake.health + 20);
-                this.snake.grow();
+                // Adjust snake length based on updated score
+                this.snake.adjustLengthBasedOnScore(this.ui.score);
                 break;
             case 'yellow':
                 this.ui.score += 20 * scoreMultiplier;
-                this.snake.grow();
+                // Adjust snake length based on updated score
+                this.snake.adjustLengthBasedOnScore(this.ui.score);
                 break;
         }
     }
